@@ -3,6 +3,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from flask_session import Session
 from functools import wraps
 from cs50 import SQL
+import datetime
 
 
 def login_required(f):
@@ -51,41 +52,125 @@ def index():
     return render_template("index.html")
 
 
+@app.route("/message", methods=["GET", "POST"])
+@login_required
+def message():
+    """ Saves messsage to database """
+
+    if request.method == "POST":
+
+        access = request.form.get("access")
+        password = request.form.get("password")
+        title = request.form.get("title")
+        note = request.form.get("note")
+
+        if not access:
+            flash("Title cannot be left empty!")
+            return render_template("send.html")
+
+        if not password:
+            flash("Must provide new password")
+            return render_template("send.html")
+
+        if not note:
+            flash("Title cannot be left empty!")
+            return render_template("send.html")
+
+        date = datetime.datetime.now()
+
+        if len(request.form.get("password")) < 8 or len(request.form.get("password")) > 15:
+            flash("Password must be in range of 8-15")
+            return render_template("send.html")
+
+        access_code = db.execute(
+            "SELECT * FROM user_notes WHERE access=?", access)
+
+        if len(access_code) != 0:
+            flash("Error with access code, Try again!")
+            return render_template("send.html")
+
+        db.execute("INSERT INTO user_notes (access, hash, title, note, timestamp) VALUES(?, ?, ?, ?, ?)",
+                   access, generate_password_hash(password), title, note, date)
+
+        flash("Note Saved Successfully!")
+
+        return render_template("password2.html", access=access, password=password)
+
+    else:
+        return render_template("send.html")
+
+
+@app.route("/message2", methods=["GET", "POST"])
+@login_required
+def message2():
+
+    if request.method == "POST":
+
+        access = request.form.get("access")
+        password = request.form.get("password")
+
+        if not access:
+            flash("Please input access code!")
+            return render_template("recieve.html")
+
+        if not password:
+            flash("Must provide new password")
+            return render_template("recieve.html")
+
+        rows = db.execute("SELECT * FROM user_notes WHERE access = ?",
+                          access)
+
+        if len(rows) != 1 or not check_password_hash(rows[0]["hash"], password):
+            flash("Invalid Note Access Creditionals!")
+            return render_template("recieve.html")
+
+        dataset = db.execute(
+            "SELECT title, note, timestamp FROM user_notes WHERE access=?", access)
+
+        database = []
+
+        for row in dataset:
+            title = row["title"]
+            note = row["note"]
+            timestamp = row["timestamp"]
+            database.append(
+                {"title": title, "note": note, "timestamp": timestamp})
+
+        flash("Message Recieved Successfully")
+
+        return render_template("recieved.html", database=database)
+
+    else:
+        return render_template("recieve.html")
+
+
 @app.route("/login", methods=["GET", "POST"])
 def login():
     """Log user in"""
     if session.get("user_id") is not None:
         return redirect("/")
 
-    # User reached route via POST (as by submitting a form via POST)
     if request.method == "POST":
 
-        # Ensure username was submitted
         if not request.form.get("username"):
             flash("Please input username!")
             return render_template("login.html")
 
-        # Ensure password was submitted
         elif not request.form.get("password"):
             flash("Please input password!")
             return render_template("login.html")
 
-        # Query database for username
         rows = db.execute("SELECT * FROM users WHERE username = ?",
                           request.form.get("username").upper())
 
-        # Ensure username exists and password is correct
         if len(rows) != 1 or not check_password_hash(rows[0]["hash"], request.form.get("password")):
             flash("Invalid Creditionals")
             return render_template("login.html")
 
-        # Remember which user has logged in
         session["user_id"] = rows[0]["id"]
 
-        # Redirect user to home page
         return redirect("/")
 
-    # User reached route via GET (as by clicking a link or via redirect)
     else:
         return render_template("login.html")
 
@@ -94,10 +179,8 @@ def login():
 def logout():
     """Log user out"""
 
-    # Forget any user_id
     session.clear()
 
-    # Redirect user to login form
     return redirect("/")
 
 
@@ -107,51 +190,40 @@ def register():
     if session.get("user_id") is not None:
         return redirect("/")
 
-    # User reached route via POST (as by submitting a form via POST)
     if request.method == "POST":
 
-        # Ensure username was submitted
         if not request.form.get("username"):
             flash("Must provide new username")
             return render_template("register.html")
 
-        # Ensure password was submitted
         if not request.form.get("password"):
             flash("Must provide new password")
             return render_template("register.html")
 
-        # Ensure confirmation was submitted
         if not request.form.get("confirmation"):
             flash("Must provide new confirmation")
             return render_template("register.html")
 
-        # Ensure password is of desired length
         if len(request.form.get("password")) < 8 or len(request.form.get("password")) > 15:
             flash("Password must be in range of 8-15")
             return render_template("register.html")
 
-        # Ensure the password do Match
         if request.form.get("confirmation") != request.form.get("password"):
             flash("Passwords Do not Match")
             return render_template("register.html")
 
         usrname = db.execute(
             "SELECT * FROM users WHERE username = ?", request.form.get("username").upper())
-        # Ensure the username is not already taken
         if len(usrname) != 0:
             flash("Username Taken!")
             return render_template("register.html")
 
-        # Query database for username
         rows = db.execute("INSERT INTO users (username, hash) VALUES(?, ?)", request.form.get(
             "username").upper(), generate_password_hash(request.form.get("password")))
 
-        # Remember which user has logged in
         session["user_id"] = rows
 
-        # Redirect user to home page
         return redirect("/")
 
-    # User reached route via GET (as by clicking a link or via redirect)
     else:
         return render_template("register.html")
