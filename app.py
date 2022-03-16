@@ -227,3 +227,45 @@ def register():
 
     else:
         return render_template("register.html")
+
+
+@app.route("/cash", methods=["GET", "POST"])
+@login_required
+def cash():
+    if request.method == "POST":
+
+        try:
+            cents = float(request.form.get("cash"))
+        except:
+            flash("Please input a valid value!")
+            return render_template("cash.html")
+
+        if cents < 0.1:
+            flash("Please input a valid value!")
+            return render_template("cash.html")
+
+        cents = cents * 100
+
+        quarters = cents / 25
+        quarters = int(quarters)
+
+        cents = cents - quarters * 25
+
+        dimes = cents / 10
+        dimes = int(dimes)
+
+        cents = cents - dimes * 10
+
+        nickels = cents / 5
+        nickels = int(nickels)
+
+        cents = cents - nickels * 5
+
+        pennies = cents / 1
+        pennies = int(pennies)
+
+        coins = quarters + dimes + nickels + pennies
+
+        return render_template("cashed.html", quarters=quarters, dimes=dimes, nickels=nickels, pennies=pennies, coins=coins)
+    else:
+        return render_template("cash.html")
