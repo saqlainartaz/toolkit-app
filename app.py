@@ -269,3 +269,79 @@ def cash():
         return render_template("cashed.html", quarters=quarters, dimes=dimes, nickels=nickels, pennies=pennies, coins=coins)
     else:
         return render_template("cash.html")
+
+
+@app.route("/credit", methods=["GET", "POST"])
+@login_required
+def credit():
+
+    if request.method == "GET":
+        return render_template("credit.html")
+
+    else:
+        try:
+            card = int(request.form.get("card"))
+        except:
+            flash("Please don't mess around!")
+            return render_template("credit.html")
+
+        d2 = int((card % 100) / 10) * 2
+        d4 = int((card % 10000) / 1000) * 2
+        d6 = int((card % 1000000) / 100000) * 2
+        d8 = int((card % 100000000) / 10000000) * 2
+        d10 = int((card % 10000000000) / 1000000000) * 2
+        d12 = int((card % 1000000000000) / 100000000000) * 2
+        d14 = int((card % 100000000000000) / 10000000000000) * 2
+        d16 = int((card % 10000000000000000) / 1000000000000000) * 2
+
+        d1 = card % 10
+        d3 = int((card % 1000) / 100)
+        d5 = int((card % 100000) / 10000)
+        d7 = int((card % 10000000) / 1000000)
+        d9 = int((card % 1000000000) / 100000000)
+        d11 = int((card % 100000000000) / 10000000000)
+        d13 = int((card % 10000000000000) / 1000000000000)
+        d15 = int((card % 1000000000000000) / 100000000000000)
+
+        d2 = (d2 % 10) + int((d2 % 100) / 10)
+        d4 = (d4 % 10) + int((d4 % 100) / 10)
+        d6 = (d6 % 10) + int((d6 % 100) / 10)
+        d8 = (d8 % 10) + int((d8 % 100) / 10)
+        d10 = (d10 % 10) + int((d10 % 100) / 10)
+        d12 = (d12 % 10) + int((d12 % 100) / 10)
+        d14 = (d14 % 10) + int((d14 % 100) / 10)
+        d16 = (d16 % 10) + int((d16 % 100) / 10)
+
+        sum1 = d2 + d4 + d6 + d8 + d10 + d12 + d14 + d16
+
+        sum2 = d1 + d3 + d5 + d7 + d9 + d11 + d13 + d15
+
+        totalSum = sum1 + sum2
+
+        amex = int(card / 10000000000000)
+
+        master = int(card / 100000000000000)
+
+        visa1 = int(card / 1000000000000)
+
+        visa2 = int(card / 1000000000000000)
+
+        if totalSum % 10 != 0:
+            response = "This Card is Invalid!"
+            return render_template("credited.html", response=response)
+
+        if amex == 34 or amex == 37:
+            response = "This is a valid AMEX Card!"
+            return render_template("credited.html", response=response)
+
+        if master == 51 or master == 52 or master == 52 or master == 53 or master == 54 or master == 55:
+            response = "This is a valid MASTERCARD!"
+            return render_template("credited.html", response=response)
+
+        if visa1 == 4 or visa2 == 4:
+            response = "This is a valid VISA Card!"
+            return render_template("credited.html", response=response)
+
+        else:
+            response = "This Card is Invalid!"
+            return render_template("credited.html", response=response)
