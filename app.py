@@ -345,3 +345,48 @@ def credit():
         else:
             response = "This Card is Invalid!"
             return render_template("credited.html", response=response)
+
+
+@app.route("/read", methods=["GET", "POST"])
+@login_required
+def read():
+
+    if request.method == "POST":
+        text = request.form.get("input")
+
+        if not text:
+            flash("Please input text to be assessed!")
+            return render_template("read.html")
+
+        letters = 0
+        for rows in text:
+            if rows.isalpha():
+                letters = letters + 1
+
+        words = 1
+        for rows in text:
+            if rows.isspace():
+                words = words + 1
+
+        sentences = 0
+        for rows in text:
+            if rows in [".", "!", "?"]:
+                sentences = sentences + 1
+
+        averageLetters = (letters * 100) / words
+
+        averageSentences = (sentences * 100) / words
+
+        index = round((0.0588 * averageLetters) - (0.296 * averageSentences) - 15.8)
+
+        if index >= 16:
+            index = "Grade 16+"
+            return render_template("read_result.html", index=index)
+        elif index < 1:
+            index = "Before Grade 1"
+            return render_template("read_result.html", index=index)
+        else:
+            index = f"Grade {index}"
+            return render_template("read_result.html", index=index)
+    else:
+        return render_template("read.html")
