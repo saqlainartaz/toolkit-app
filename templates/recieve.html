@@ -1,0 +1,18 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Message
+{% endblock %}
+
+{% block main %}
+    <h1 class="mb-3">Recieve Message/s</h1>
+    <form action="/message2" method="post">
+        <div class="mb-3">
+            <input autocomplete="off" autofocus class="form-control mx-auto w-auto" name="access" placeholder="Input access code" type="text">
+        </div>
+        <div class="mb-3">
+            <input autocomplete="off" autofocus class="form-control mx-auto w-auto" name="password" placeholder="Access password" type="password">
+        </div>
+        <button class="btn btn-outline-primary" type="submit">Recieve</button>
+    </form>
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Cash
+{% endblock %}
+
+{% block main %}
+    <form action="/cash" method="post">
+        <div class="mb-3">
+            <input autocomplete="off" name="cash" placeholder="Change Owned in Dollars" class="form-control mx-auto w-auto" onkeypress='return AllowOnlyAmountAndDot(this,event,true);'/>
+        </div>
+        <button class="btn btn-outline-primary" type="submit">Generate</button>
+    </form>
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Credit Card Checker
+{% endblock %}
+
+{% block main %}
+    <form action="/credit" method="post">
+        <div class="mb-3">
+            <input autocomplete="off" autofocus class="form-control mx-auto w-auto" name="card" placeholder="Input credit card number" type="text">
+        </div>
+        <div class="mb-3">
+        <button class="btn btn-outline-primary" type="submit">Check</button>
+        </div>
+    </form>
+{% endblock %}

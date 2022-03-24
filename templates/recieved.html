@@ -1,0 +1,26 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Recieved
+{% endblock %}
+
+{% block main %}
+    <table class="table table-hover">
+        <thead>
+            <tr class="table-active table-light text-dark">
+            <th scope="col">Title</th>
+            <th scope="col">Note</th>
+            <th scope="col">Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for data in database %}
+            <tr class="table-dark text-warning">
+                <td>{{ data["title"] }}</td>
+                <td>{{ data["note"] }}</td>
+                <td>{{ data["timestamp"] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

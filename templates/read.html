@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Readablity
+{% endblock %}
+
+{% block main %}
+    <h1 class="mb-3">Readability</h1>
+    <form action="/read" method="post">
+        <div class="mb-3">
+            <textarea class="form-control mx-auto w-75" style="height: 500px;" name="input" placeholder="Input text here" type="text"></textarea>
+        </div>
+        <button class="btn btn-outline-primary" type="submit">Check</button>
+    </form>
+{% endblock %}

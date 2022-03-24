@@ -1,0 +1,36 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Guide
+{% endblock %}
+
+{% block main %}
+    <h1 class="mb-3">Guide to MessageGuru</h1>
+        <div class="container">
+            <div class="section">
+                <h2>What does it do?</h2>
+                    <p>MessageGuru is a Server-Wide messaging service. With the help of this utility you can store a note in server database which can be accessed by any one
+                    in the server with the access code. With each access code a unique note is stored.
+                    </p>
+            </div>
+            <div class="section">
+                <h2>How to leave a note?</h2>
+                    <p>
+                    I have given you, the user, ability to choose access code of your own choice but if it is already in the server it will throw an ugly error.
+                    </p>
+                    <p>
+                    Using this feature is easy. Just choose a access code which can be similar to a password in a sense. Then, choose a title for your note and then write a note. For now only
+                    single line code is supported.(i.e without line breaks)
+                    </p>
+            </div>
+            <div class="section">
+                <h2>How to recieve a message</h2>
+                    <p>
+                    To recieve a message you need access code. This can be provided by the one who created the message.
+                    </p>
+                    <p>
+                    Input the case-sensitive access code and click on submit. you will then recieve the code.
+                    </p>
+            </div>
+        </div>
+{% endblock %}
