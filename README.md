@@ -70,4 +70,4 @@ templates/          # Jinja2 layout files and page templates
 
 ## Author
 
-Saqlain Alam — [s-artaz](https://github.com/s-artaz) · CS50x 2022 Final Project
+Saqlain Alam — [saqlainartaz](https://github.com/saqlainartaz) · CS50x 2022 Final Project
